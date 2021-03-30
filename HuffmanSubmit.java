@@ -15,7 +15,8 @@ import java.util.Arrays;
 
 public class HuffmanSubmit implements Huffman {
 	public static void main(String[] args) {
-		//Huffman  huffman = new HuffmanSubmit();
+		Huffman  huffman = new HuffmanSubmit();
+		huffman.encode("alice30.txt", "out.enc", "freq.txt");
 		//huffman.encode("ur.jpg", "ur.enc", "freq.txt");
 		//huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
 		// After decoding, both ur.jpg and ur_dec.jpg should be the same. 
@@ -59,24 +60,84 @@ public class HuffmanSubmit implements Huffman {
 			;
 		}
 
-		//HashMap<Character, Integer> cmap = getHashMap("freq.txt");
+		HashMap<Character, Integer> cmap = getHashMap("freq.txt");
 		//createFreqFile(cmap, "test.txt");
+		System.out.println("Printing Hashmap:");
+		for (Character c : cmap.keySet()) {
+			System.out.println(c + ": " + cmap.get(c));
+		}
 
-		Node root = createTree(pq);
+		// create huffman tree
+		//Node root = createTree(pq);
+		Node root = buildTree(map);
+		System.out.println("Printing Tree:\n");
 		printTree(root);
-		
-		// next steps:
-		// make huffman tree
-		// create codeword table
-		// write encode & decode methods
+
+		//String[] codewordTable = buildCode(root);
+		/*
+		for (int i = 0; i < codewordTable.length; i++) {
+			try {
+				if (codewordTable[i].length() > 0)
+				System.out.println((char)i + ": " + codewordTable[i]);
+			}
+			catch (NullPointerException n) {
+				continue;
+			}
+
+		}*/
 	}
   
 	// Feel free to add more methods and variables as required. 
- 
+	public void encode(String inputFile, String outputFile, String freqFile){
+		// read input file and create freq file
+		HashMap<Character, Integer> map = readFile(inputFile);
+		createFreqFile(map, freqFile);
+
+		// create minimum priority queue
+		MinPQ pq = new MinPQ(map.size());
+		for (Character c : map.keySet()) {
+			Node newNode = new Node(c, map.get(c), null, null);
+			pq.insert(newNode);
+		}
+
+		// build huffman tree
+		Node root = buildTree(map);
+
+		// create codeword table
+		//HashMap<Character, String> table = createCodewordTable(root);
+		String[] table = buildCode(root);
+
+		BinaryOut encoded = new BinaryOut(outputFile);
+		BinaryIn original = new BinaryIn(inputFile);
+
+		// write encoding for character in new file
+		char c = 0;
+		try {
+			while ((c = original.readChar()) != -1) {
+				String enc = table[c];
+				for (int i = 0; i < enc.length(); i++) {
+					if (enc.charAt(i) == 0) {
+						encoded.write(false);
+					}
+					else {
+						encoded.write(true);
+					}
+				}
+				encoded.flush();
+			}
+		}
+		catch (NoSuchElementException e) {
+			// processed through file
+		}
+
+		// close file
+		encoded.close();
+	}
+
+	/*
 	public void encode(String inputFile, String outputFile, String freqFile){
 		// Your code here
-   	}
-
+   	}*/
 
    	public void decode(String inputFile, String outputFile, String freqFile){
 		// Your code here
@@ -116,8 +177,6 @@ public class HuffmanSubmit implements Huffman {
 		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
 		
 		BinaryIn in = new BinaryIn(inputFile);
-
-		//System.out.println("Read file " + inputFile);
 
 		// read until EOF
 		char c = 0;
@@ -198,10 +257,10 @@ public class HuffmanSubmit implements Huffman {
 		return map;
 	}
 
-	/*
+	/*	// HAS SOME ERROR //
 		Create Huffman Tree from minimum priority queue.
 		Returns the root of the tree.
-	*/
+	*//*
 	public static Node createTree(MinPQ pq) {
 		Node min = pq.getNode();
 		Node secondMin = pq.getNode();
@@ -216,6 +275,23 @@ public class HuffmanSubmit implements Huffman {
 		}
 		
 		return lastTop;
+	}
+	*/
+
+	public static Node buildTree(HashMap<Character, Integer> map) {
+		MinPQ pq = new MinPQ(map.size());
+		for (Character c : map.keySet()) {
+			pq.insert(new Node(c, map.get(c), null, null));
+		}
+
+		while (pq.getSize() > 1) {
+			Node x = pq.getNode();
+			Node y = pq.getNode();
+			Node parent = new Node('\0', x.freq + y.freq, x, y);
+			pq.insert(parent);
+		}
+
+		return pq.getNode();
 	}
 
 	/*
@@ -232,6 +308,54 @@ public class HuffmanSubmit implements Huffman {
 		if (root.right != null) {
 			printTree(root.right);
 		}
+	}
+
+	/* Building codeword table according to book */
+	public static String[] buildCode(Node root) {
+		// ASCII alphabet
+		int R = 256;
+
+		String[] st = new String[R];
+		buildCode(st, root, "");
+
+		return st;
+	}
+
+	public static void buildCode(String[] st, Node x, String s) {
+		if (x.isLeaf()) {
+			st[x.ch] = s;
+			return;
+		}
+
+		buildCode(st, x.left, s + '0');
+		buildCode(st, x.right, s + '1');
+	}
+
+	/*
+		Building codeword table
+	*/
+
+	public static HashMap<Character, String> createCodewordTable(Node root) {
+		HashMap<Character, String> map = new HashMap<Character, String>();
+		map = buildTable(map, root, "");
+
+		return map;
+	}
+
+	public static HashMap<Character, String> buildTable(HashMap<Character, String> map, Node root, String s) {
+		if (root.left != null) {
+			buildTable(map, root.left, s + '0');
+		}
+
+		if (root.isLeaf()) {
+			map.put(root.ch, s);
+		}
+
+		if (root.right != null) {
+			buildTable(map, root.right, s + '1');
+		}
+
+		return map;
 	}
 
 	/*
