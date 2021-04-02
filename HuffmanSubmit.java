@@ -73,8 +73,8 @@ public class HuffmanSubmit implements Huffman {
 		System.out.println("Printing Tree:\n");
 		printTree(root);
 
-		//String[] codewordTable = buildCode(root);
-		/*
+		String[] codewordTable = buildCode(root);
+		
 		for (int i = 0; i < codewordTable.length; i++) {
 			try {
 				if (codewordTable[i].length() > 0)
@@ -84,7 +84,7 @@ public class HuffmanSubmit implements Huffman {
 				continue;
 			}
 
-		}*/
+		}
 	}
   
 	// Feel free to add more methods and variables as required. 
@@ -123,8 +123,10 @@ public class HuffmanSubmit implements Huffman {
 						encoded.write(true);
 					}
 				}
-				encoded.flush();
 			}
+
+			// add padding to make multiple of a byte
+			encoded.flush();
 		}
 		catch (NoSuchElementException e) {
 			// processed through file
