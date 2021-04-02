@@ -9,6 +9,8 @@
  * 	@date	04/02/21
  */
 
+ /* Import required packages */
+
 import java.util.HashMap;
 
 // for using BinaryIn and BinaryOut
@@ -34,7 +36,7 @@ public class HuffmanSubmit implements Huffman {
 	}
 	
 	/*
-		@fn		encode()
+		@fn 	encode()
 		@param 	output file name	(compressed file)
 		@param	input file name		(to be compressed)
 		@param 	frequency file		(needed for decoding)
