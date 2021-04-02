@@ -11,9 +11,10 @@ import java.util.Scanner;
 public class HuffmanSubmit implements Huffman {
 	public static void main(String[] args) {
 		Huffman  huffman = new HuffmanSubmit();
-		//huffman.encode("alice30.txt", "out.enc", "freq.txt");
+		huffman.encode("alice30.txt", "out.enc", "freq.txt");
+		huffman.decode("out.enc", "alice30_dec.txt", "freq.txt");
 		huffman.encode("ur.jpg", "ur.enc", "freq.txt");
-		//huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
+		huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
 		// After decoding, both ur.jpg and ur_dec.jpg should be the same. 
 		// On linux and mac, you can use `diff' command to check if they are the same. 
 	}
@@ -57,7 +58,7 @@ public class HuffmanSubmit implements Huffman {
 			while ((c = original.readChar()) != -1) {
 				String enc = table.get(c);
 				for (int i = 0; i < enc.length(); i++) {
-					if (enc.charAt(i) == 0) {
+					if (enc.charAt(i) == '0') {
 						encoded.write(false);
 					}
 					else {
@@ -77,10 +78,92 @@ public class HuffmanSubmit implements Huffman {
 		encoded.close();
 	}
 
+	/*
+		@fn		decode()
+		@param 	input file name		(compressed file)
+		@param	output file name	(to be decompressed)
+		@param 	frequency file		(needed for decoding)
+		@brief	Decodes the input file which is compressed using the Huffman 
+				Compression Algorithm.
+				Reads the frequency file to create the same Huffman tree which is
+				created during encoding/compression.
+				Reads the compressed file bit by bit and traverses down the tree
+				until a leaf node is reached printing the character when it does.
+
+				* Have 2 options to traverse and print: iterative and recursive.
+				Iterative goes easy on the stack but uses exception handling more
+				often as it checks for EOF after every bit read. Still, it is
+				much simpler than the recursive implementation - which is more
+				compact. *
+	*/
    	public void decode(String inputFile, String outputFile, String freqFile){
-		// Your code here
+		// read freq file and create hashmap
+		HashMap<Character, Integer> map = getHashMap(freqFile);
+
+		// create huffman tree
+		Node root = buildTree(map);
+
+		BinaryIn encoded = new BinaryIn(inputFile);
+		BinaryOut decoded = new BinaryOut(outputFile);
+		
+		// read bits and replace encodings with characters until EOF
+		Node node = root;
+		Boolean EOF = false;
+		while (EOF == false) {
+			try { 
+				/* iterative method to write decompressed file */
+				Boolean bit = encoded.readBoolean();
+				if (bit == false) {
+					node = node.left;
+				}
+				else {
+					node = node.right;
+				}
+	
+				if (node.isLeaf()) {
+					decoded.write(node.ch);
+					node = root;
+				}
+
+				/* if the recursive method is to be used */
+				//char c = traverseTree(root, encoded);
+				//decoded.write(c);
+			}
+			catch (NoSuchElementException e) {
+				// end of file
+				EOF = true;
+			}
+		}
+
+		// close file
+		decoded.close();
    	}
 	
+	/*
+	   Recursive method to traverse down the tree while decompression.
+	   Returns the character at the leaf node after traversing the tree
+	   according to the bits read from the encoded file.
+
+	   * TESTED: works perfectly, however iterative method preferred (much simpler) *
+	*/
+	public static char traverseTree(Node root, BinaryIn in) {
+		char c;
+		if (!root.isLeaf()) {
+			boolean bit = in.readBoolean();
+			if (bit == false) {
+				c = traverseTree(root.left, in);
+			}
+			else {
+				c = traverseTree(root.right, in);
+			}
+		}
+		else {
+			c = root.ch;
+		}
+		
+		return c;
+	}
+
 	/*
 	   Write every character's binary representation along with its frequency
 	   contained in the hashmap/dictionary to a file in the format:
@@ -339,7 +422,7 @@ public class HuffmanSubmit implements Huffman {
 		public Boolean isEmpty() {
 			return (size == 0);
 		}
-	
+
 		/*
 			Returns the number of elements currently in the queue.
 		*/
@@ -403,7 +486,7 @@ public class HuffmanSubmit implements Huffman {
 			for (int i = 0; i < getSize(); i++)
 				System.out.println(at(i + 1).ch);
 		}
-	
+
 		/**
 		 * Helper methods
 		 */
