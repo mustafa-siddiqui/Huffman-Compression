@@ -8,86 +8,28 @@ import java.io.PrintStream;
 
 import java.util.Scanner;
 
-// temporary stuff
-import java.util.Arrays;
-
-// Import any package as required
-
 public class HuffmanSubmit implements Huffman {
 	public static void main(String[] args) {
 		Huffman  huffman = new HuffmanSubmit();
-		huffman.encode("alice30.txt", "out.enc", "freq.txt");
-		//huffman.encode("ur.jpg", "ur.enc", "freq.txt");
+		//huffman.encode("alice30.txt", "out.enc", "freq.txt");
+		huffman.encode("ur.jpg", "ur.enc", "freq.txt");
 		//huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
 		// After decoding, both ur.jpg and ur_dec.jpg should be the same. 
 		// On linux and mac, you can use `diff' command to check if they are the same. 
-
-		// read file and store chars and their frequencies
-		HashMap<Character, Integer> map = readFile("alice30.txt");
-		/*
-		for (Character c : map.keySet()) {
-			System.out.println(c + ": " + map.get(c));
-		}*/
-
-		// write freq table to file
-		createFreqFile(map, "freq.txt");
-
-		// create minimum priority queue
-		MinPQ pq = new MinPQ(map.size());
-		for (Character c : map.keySet()) {
-			Node newNode = new Node(c, map.get(c), null, null);
-			pq.insert(newNode);
-		}
-
-		// print tree in a separate file
-		try {
-			PrintStream out = new PrintStream(new File("tree.txt"));
-			PrintStream console = System.out;
-			System.setOut(out);
-
-			System.out.println("Size: " + pq.getSize());
-			
-			pq.dump();
-
-			System.out.println();
-			pq.printQueue();
-
-			out.close();
-			System.setOut(console);
-
-		}
-		catch (FileNotFoundException e) {
-			;
-		}
-
-		HashMap<Character, Integer> cmap = getHashMap("freq.txt");
-		//createFreqFile(cmap, "test.txt");
-		System.out.println("Printing Hashmap:");
-		for (Character c : cmap.keySet()) {
-			System.out.println(c + ": " + cmap.get(c));
-		}
-
-		// create huffman tree
-		//Node root = createTree(pq);
-		Node root = buildTree(map);
-		System.out.println("Printing Tree:\n");
-		printTree(root);
-
-		String[] codewordTable = buildCode(root);
-		
-		for (int i = 0; i < codewordTable.length; i++) {
-			try {
-				if (codewordTable[i].length() > 0)
-				System.out.println((char)i + ": " + codewordTable[i]);
-			}
-			catch (NullPointerException n) {
-				continue;
-			}
-
-		}
 	}
-  
-	// Feel free to add more methods and variables as required. 
+	
+	/*
+		@fn		encode()
+		@param 	output file name	(compressed file)
+		@param	input file name		(to be compressed)
+		@param 	frequency file		(needed for decoding)
+		@brief	Encodes the input file using the Huffman Compression Algorithm.
+				Creates a frequency file containing the frequency of the occurances
+				of each character with the character represented as a binary string.
+				Builds a huffman tree by creating a minimum priority queue and then
+				compresses the file by replacing each character by its huffman
+				encoding in the compressed file (output file).
+	*/
 	public void encode(String inputFile, String outputFile, String freqFile){
 		// read input file and create freq file
 		HashMap<Character, Integer> map = readFile(inputFile);
@@ -104,17 +46,16 @@ public class HuffmanSubmit implements Huffman {
 		Node root = buildTree(map);
 
 		// create codeword table
-		//HashMap<Character, String> table = createCodewordTable(root);
-		String[] table = buildCode(root);
+		HashMap<Character, String> table = createCodewordTable(root);
 
 		BinaryOut encoded = new BinaryOut(outputFile);
 		BinaryIn original = new BinaryIn(inputFile);
 
-		// write encoding for character in new file
+		// write encoding for character in new binary file
 		char c = 0;
 		try {
 			while ((c = original.readChar()) != -1) {
-				String enc = table[c];
+				String enc = table.get(c);
 				for (int i = 0; i < enc.length(); i++) {
 					if (enc.charAt(i) == 0) {
 						encoded.write(false);
@@ -135,11 +76,6 @@ public class HuffmanSubmit implements Huffman {
 		// close file
 		encoded.close();
 	}
-
-	/*
-	public void encode(String inputFile, String outputFile, String freqFile){
-		// Your code here
-   	}*/
 
    	public void decode(String inputFile, String outputFile, String freqFile){
 		// Your code here
@@ -259,27 +195,14 @@ public class HuffmanSubmit implements Huffman {
 		return map;
 	}
 
-	/*	// HAS SOME ERROR //
-		Create Huffman Tree from minimum priority queue.
-		Returns the root of the tree.
-	*//*
-	public static Node createTree(MinPQ pq) {
-		Node min = pq.getNode();
-		Node secondMin = pq.getNode();
-
-		Node top = new Node('@', (min.freq + secondMin.freq), min, secondMin);
-		Node lastTop = top;
-
-		while (!pq.isEmpty()) {
-			min = pq.getNode();
-			top = new Node('@', (lastTop.freq + min.freq), min, lastTop);
-			lastTop = top;
-		}
-		
-		return lastTop;
-	}
+	/*
+		Create Huffman tree from hashmap. A priority queue is first created
+		from the hashmap and then is used to make the huffman tree. The two
+		minimum nodes are joined to make a 'litte tree' with the root node
+		having frequency = sum of the child nodes' frequencies, and is 
+		inserted back into the priority queue. This process is continued
+		until no nodes remain in the priority queue. 
 	*/
-
 	public static Node buildTree(HashMap<Character, Integer> map) {
 		MinPQ pq = new MinPQ(map.size());
 		for (Character c : map.keySet()) {
@@ -312,31 +235,10 @@ public class HuffmanSubmit implements Huffman {
 		}
 	}
 
-	/* Building codeword table according to book */
-	public static String[] buildCode(Node root) {
-		// ASCII alphabet
-		int R = 256;
-
-		String[] st = new String[R];
-		buildCode(st, root, "");
-
-		return st;
-	}
-
-	public static void buildCode(String[] st, Node x, String s) {
-		if (x.isLeaf()) {
-			st[x.ch] = s;
-			return;
-		}
-
-		buildCode(st, x.left, s + '0');
-		buildCode(st, x.right, s + '1');
-	}
-
 	/*
-		Building codeword table
+		Building codeword table from the Huffman tree.
+		This stores the huffman encodings for each character.
 	*/
-
 	public static HashMap<Character, String> createCodewordTable(Node root) {
 		HashMap<Character, String> map = new HashMap<Character, String>();
 		map = buildTable(map, root, "");
@@ -344,6 +246,12 @@ public class HuffmanSubmit implements Huffman {
 		return map;
 	}
 
+	/*
+		Recursive method which traverses the tree in-order and
+		gets the encodings for each character. A traversal down
+		the left child adds a '0' while a traversal down the right
+		child adds a '1'.
+	*/
 	public static HashMap<Character, String> buildTable(HashMap<Character, String> map, Node root, String s) {
 		if (root.left != null) {
 			buildTable(map, root.left, s + '0');
@@ -403,7 +311,6 @@ public class HuffmanSubmit implements Huffman {
         Class for implementing a Minimum Priority Queue. 
         This is used to build the Huffman Tree.
 	*/
-	//static class MinPQ<T extends Comparable<T>> {
 	private static class MinPQ {
 		/*
 		   pq = array representing queue.
@@ -438,14 +345,6 @@ public class HuffmanSubmit implements Huffman {
 		*/
 		public int getSize() {
 			return size;
-		}
-	
-		/*
-			Returns the node at the top/front of the queue.
-			Does not remove the node from the queue.
-		*/
-		public Node peek() {
-			return (pq[1]);
 		}
 
 		/*
@@ -487,32 +386,6 @@ public class HuffmanSubmit implements Huffman {
 				System.out.println(at(i).ch + ": " + at(i).freq);
 			}
 
-		}
-
-		public void dump() {
-			int height = log2(getSize()) + 1;
-	
-			for (int i = 1, len = getSize(); i < len; i++) {
-				int x = at(i).freq;
-				int level = log2(i) + 1;
-				int spaces = (height - level + 1) * 2;
-	
-				System.out.print(stringOfSize(spaces, ' '));
-				System.out.print(x + ": " + at(i).ch);
-	
-				if((int)Math.pow(2, level) - 1 == i) System.out.println();
-			}
-		}
-	
-		private String stringOfSize(int size, char ch) {
-			char[] a = new char[size];
-			Arrays.fill(a, ch);
-			return new String(a);
-		}
-	
-		// log with base 2
-		private int log2(int x) {
-			return (int)(Math.log(x) / Math.log(2)); // = log(x) with base 10 / log(2) with base 10
 		}
 
 		/*
@@ -584,12 +457,4 @@ public class HuffmanSubmit implements Huffman {
 			}
 		}
 	}
-
-	/*
-	public static void print(MinPQ pq) {
-		for (int i = 0; i < pq.getSize(); i++) {
-			System.out.println(pq.at(i + 1).freq);
-		}
-	}
-	*/
 }
