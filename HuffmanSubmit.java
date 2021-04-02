@@ -95,7 +95,7 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		@fn		decode()
+		@fn 	decode()
 		@param 	input file name		(compressed file)
 		@param	output file name	(to be decompressed)
 		@param 	frequency file		(needed for decoding)
