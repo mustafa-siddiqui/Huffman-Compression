@@ -1,22 +1,36 @@
+/**
+ * 	@file	HuffmanSubmit.java
+ * 	@brief	Huffman Coding Algorithm implementation using Minimum
+ * 			Priority Queue to construct Huffman tree.
+ * 			An extra frequency file 'freq.txt' is produced which
+ * 			stores the characters in their binary representation
+ * 			and their frequencies in the original file.
+ * 	@author	Mustafa Siddiqui
+ * 	@date	04/02/21
+ */
+
 import java.util.HashMap;
+
+// for using BinaryIn and BinaryOut
 import java.util.NoSuchElementException;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-
 import java.util.Scanner;
 
 public class HuffmanSubmit implements Huffman {
 	public static void main(String[] args) {
 		Huffman  huffman = new HuffmanSubmit();
+
+		// text files -> alice30.txt same as alice30_dec.txt
 		huffman.encode("alice30.txt", "out.enc", "freq.txt");
 		huffman.decode("out.enc", "alice30_dec.txt", "freq.txt");
+
+		// jpg files -> ur.jpg same as ur_dec.jpg
 		huffman.encode("ur.jpg", "ur.enc", "freq.txt");
 		huffman.decode("ur.enc", "ur_dec.jpg", "freq.txt");
-		// After decoding, both ur.jpg and ur_dec.jpg should be the same. 
-		// On linux and mac, you can use `diff' command to check if they are the same. 
 	}
 	
 	/*
