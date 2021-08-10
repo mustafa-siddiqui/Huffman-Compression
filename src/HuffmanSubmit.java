@@ -1,21 +1,17 @@
 /**
  * 	@file	HuffmanSubmit.java
  * 	@brief	Huffman Coding Algorithm implementation using Minimum
- * 			Priority Queue to construct Huffman tree.
- * 			An extra frequency file 'freq.txt' is produced which
- * 			stores the characters in their binary representation
- * 			and their frequencies in the original file.
+ *		Priority Queue to construct Huffman tree.
+ *		An extra frequency file 'freq.txt' is produced which
+ *		stores the characters in their binary representation
+ *		and their frequencies in the original file.
  * 	@author	Mustafa Siddiqui
  * 	@date	04/02/21
  */
 
  /* Import required packages */
-
 import java.util.HashMap;
-
-// for using BinaryIn and BinaryOut
-import java.util.NoSuchElementException;
-
+import java.util.NoSuchElementException;	// for using BinaryIn and BinaryOut
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,16 +32,18 @@ public class HuffmanSubmit implements Huffman {
 	}
 	
 	/*
-		@fn 	encode()
-		@param 	output file name	(compressed file)
-		@param	input file name		(to be compressed)
-		@param 	frequency file		(needed for decoding)
-		@brief	Encodes the input file using the Huffman Compression Algorithm.
-				Creates a frequency file containing the frequency of the occurances
-				of each character with the character represented as a binary string.
-				Builds a huffman tree by creating a minimum priority queue and then
-				compresses the file by replacing each character by its huffman
-				encoding in the compressed file (output file).
+	 @fn 	encode()
+	 
+	 @param output file name (compressed file)
+	 @param	input file name	 (to be compressed)
+	 @param frequency file	 (needed for decoding)
+	 
+	 @brief	Encodes the input file using the Huffman Compression Algorithm.
+		Creates a frequency file containing the frequency of the occurances
+		of each character with the character represented as a binary string.
+		Builds a huffman tree by creating a minimum priority queue and then
+		compresses the file by replacing each character by its huffman
+		encoding in the compressed file (output file).
 	*/
 	public void encode(String inputFile, String outputFile, String freqFile){
 		// read input file and create freq file
@@ -95,22 +93,21 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		@fn 	decode()
-		@param 	input file name		(compressed file)
-		@param	output file name	(to be decompressed)
-		@param 	frequency file		(needed for decoding)
-		@brief	Decodes the input file which is compressed using the Huffman 
-				Compression Algorithm.
-				Reads the frequency file to create the same Huffman tree which is
-				created during encoding/compression.
-				Reads the compressed file bit by bit and traverses down the tree
-				until a leaf node is reached printing the character when it does.
+	 @fn 	decode()
+	 @param input file name	 (compressed file)
+	 @param	output file name (to be decompressed)
+	 @param frequency file	 (needed for decoding)
+	 @brief	Decodes the input file which is compressed using the Huffman 
+		Compression Algorithm.
+		Reads the frequency file to create the same Huffman tree which is
+		created during encoding/compression.
+		Reads the compressed file bit by bit and traverses down the tree
+		until a leaf node is reached printing the character when it does.
 
-				* Have 2 options to traverse and print: iterative and recursive.
-				Iterative goes easy on the stack but uses exception handling more
-				often as it checks for EOF after every bit read. Still, it is
-				much simpler than the recursive implementation - which is more
-				compact. *
+		=> Have 2 options to traverse and print: iterative and recursive.
+		Iterative goes easy on the stack but uses exception handling more
+		often as it checks for EOF after every bit read. Still, it is much 
+		simpler than the recursive implementation - which is more compact. <=
 	*/
    	public void decode(String inputFile, String outputFile, String freqFile){
 		// read freq file and create hashmap
@@ -160,7 +157,7 @@ public class HuffmanSubmit implements Huffman {
 	   Returns the character at the leaf node after traversing the tree
 	   according to the bits read from the encoded file.
 
-	   * TESTED: works perfectly, however iterative method preferred (much simpler) *
+	   => TESTED: works perfectly, however iterative method preferred (much simpler) <=
 	*/
 	public static char traverseTree(Node root, BinaryIn in) {
 		char c;
@@ -234,7 +231,7 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Returns the binary representation of a character as a string.
+	 Returns the binary representation of a character as a string.
 	*/
 	public static String charToBinary(char c) {
 		int n = c;
@@ -252,7 +249,7 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Returns the character value of a binary number represented as a string.
+	 Returns the character value of a binary number represented as a string.
 	*/
 	public static char BinaryToChar(String bin) {
 		int l = bin.length();
@@ -267,9 +264,9 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Returns a hashmap with keys corresponding to characters and the
-		values corresponding to their frequencies as stored in the 
-		frequency file. 
+	 Returns a hashmap with keys corresponding to characters and the
+	 values corresponding to their frequencies as stored in the 
+	 frequency file. 
 	*/
 	public static HashMap<Character, Integer> getHashMap(String freqFile) {
 		HashMap<Character, Integer> map = new HashMap<Character, Integer>();
@@ -295,12 +292,12 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Create Huffman tree from hashmap. A priority queue is first created
-		from the hashmap and then is used to make the huffman tree. The two
-		minimum nodes are joined to make a 'litte tree' with the root node
-		having frequency = sum of the child nodes' frequencies, and is 
-		inserted back into the priority queue. This process is continued
-		until no nodes remain in the priority queue. 
+	 Create Huffman tree from hashmap. A priority queue is first created
+	 from the hashmap and then is used to make the huffman tree. The two
+	 minimum nodes are joined to make a 'litte tree' with the root node
+	 having frequency = sum of the child nodes' frequencies, and is 
+	 inserted back into the priority queue. This process is continued
+	 until no nodes remain in the priority queue. 
 	*/
 	public static Node buildTree(HashMap<Character, Integer> map) {
 		MinPQ pq = new MinPQ(map.size());
@@ -335,8 +332,8 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Building codeword table from the Huffman tree.
-		This stores the huffman encodings for each character.
+	 Building codeword table from the Huffman tree.
+	 This stores the huffman encodings for each character.
 	*/
 	public static HashMap<Character, String> createCodewordTable(Node root) {
 		HashMap<Character, String> map = new HashMap<Character, String>();
@@ -346,10 +343,10 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-		Recursive method which traverses the tree in-order and
-		gets the encodings for each character. A traversal down
-		the left child adds a '0' while a traversal down the right
-		child adds a '1'.
+	 Recursive method which traverses the tree in-order and
+	 gets the encodings for each character. A traversal down
+	 the left child adds a '0' while a traversal down the right
+	 child adds a '1'.
 	*/
 	public static HashMap<Character, String> buildTable(HashMap<Character, String> map, Node root, String s) {
 		if (root.left != null) {
@@ -368,7 +365,7 @@ public class HuffmanSubmit implements Huffman {
 	}
 
 	/*
-	    Class to store a node in the Huffman tree.
+	 Class to store a node in the Huffman tree.
 	*/
    	private static class Node implements Comparable<Node> {
 		private char ch;
@@ -377,7 +374,7 @@ public class HuffmanSubmit implements Huffman {
 		private final Node right;
 
 		/*
-			Constructor for Node class.
+		 Constructor for Node class.
 		*/
 		Node(char character, int frequency, Node leftNode, Node rightNode) {
 			ch = character;
@@ -387,19 +384,19 @@ public class HuffmanSubmit implements Huffman {
 		}
 
 		/*
-			Method which checks if the node is a leaf node or not.
-			Returns True or False.
+		 Method which checks if the node is a leaf node or not.
+		 Returns True or False.
 		*/
 		public boolean isLeaf() {
 			return (left == null && right == null);
 		}
 
 		/*
-			Method which compares the current with another node.
-			Returns a negative value if the current node has less frequency
-			than the other node and a positive value if the current node has
-			more frequency than the other node.
-			If the return value = 0, the nodes have the same frequency.
+		 Method which compares the current with another node.
+		 Returns a negative value if the current node has less frequency
+		 than the other node and a positive value if the current node has
+		 more frequency than the other node.
+		 If the return value = 0, the nodes have the same frequency.
 		*/
 		public int compareTo(Node otherNode) {
 			return (freq - otherNode.freq);
@@ -407,8 +404,8 @@ public class HuffmanSubmit implements Huffman {
    	}
 	
 	/*
-        Class for implementing a Minimum Priority Queue. 
-        This is used to build the Huffman Tree.
+         Class for implementing a Minimum Priority Queue. 
+         This is used to build the Huffman Tree.
 	*/
 	private static class MinPQ {
 		/*
@@ -433,29 +430,29 @@ public class HuffmanSubmit implements Huffman {
 		}
 	
 		/*
-			Returns if the queue is empty or not.
+		 Returns if the queue is empty or not.
 		*/
 		public Boolean isEmpty() {
 			return (size == 0);
 		}
 
 		/*
-			Returns the number of elements currently in the queue.
+		 Returns the number of elements currently in the queue.
 		*/
 		public int getSize() {
 			return size;
 		}
 
 		/*
-			Returns the node at the index i.
-			Does not remove the node from the queue.
+		 Returns the node at the index i.
+		 Does not remove the node from the queue.
 		*/
 		public Node at(int i) {
 			return (pq[i]);
 		}
 
 		/*
-			Add node to the priority queue.
+		 Add node to the priority queue.
 		*/
 		public void insert(Node newNode) {
 			if (newNode == null) {
@@ -467,7 +464,7 @@ public class HuffmanSubmit implements Huffman {
 		}
 
 		/*
-			Remove node from queue.
+		 Remove node from queue.
 		*/
 		public Node getNode() {
 			Node min = pq[1];
@@ -478,7 +475,7 @@ public class HuffmanSubmit implements Huffman {
 		}
 
 		/*
-			Print queue with characters and their frequencies.
+		 Print queue with characters and their frequencies.
 		*/
 		public void printQueue() {
 			for (int i = 1; i < getSize(); i++) {
@@ -488,7 +485,7 @@ public class HuffmanSubmit implements Huffman {
 		}
 
 		/*
-			Print Node frequencies in heap order.
+		 Print Node frequencies in heap order.
 		*/
 		public void printQueue_freq() {
 			for (int i = 0; i < getSize(); i++)
@@ -496,26 +493,26 @@ public class HuffmanSubmit implements Huffman {
 		}
 
 		/*
-			Print Node characters in heap order.
+		 Print Node characters in heap order.
 		*/
 		public void printQueue_char() {
 			for (int i = 0; i < getSize(); i++)
 				System.out.println(at(i + 1).ch);
 		}
 
-		/**
-		 * Helper methods
-		 */
+		/***
+		  Helper methods
+		 ***/
 		
 		/*
-			Returns true if element at i is less than element at j.
+		 Returns true if element at i is less than element at j.
 		*/
 		private Boolean less(int i, int j) {
 			return (pq[i].compareTo(pq[j]) < 0);
 		}
 		
 		/*
-			Swaps elements at indexes i and j.
+		 Swaps elements at indexes i and j.
 		*/
 		private void swap(int i, int j) {
 			Node temp = pq[i];
@@ -524,8 +521,8 @@ public class HuffmanSubmit implements Huffman {
 		}
 	
 		/*
-			Heapify if a node's key (freq) is smaller than its parent.
-			Replace a node with its parent and repeat until heap is valid.
+		 Heapify if a node's key (freq) is smaller than its parent.
+		 Replace a node with its parent and repeat until heap is valid.
 		*/
 		private void bubbleUp(int k) {
 			// k/2 is the index of the parent
@@ -536,9 +533,9 @@ public class HuffmanSubmit implements Huffman {
 		}
 	
 		/*
-			Heapify if a node's key (freq) is greater than its children.
-			Replace node with the larger of its children and repeat 
-			until heap is valid.
+		 Heapify if a node's key (freq) is greater than its children.
+		 Replace node with the larger of its children and repeat 
+		 until heap is valid.
 		*/
 		private void bubbleDown(int k) {
 			while (2*k <= size) {
