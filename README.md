@@ -6,8 +6,8 @@ A frequency file is produced which stores the frequency of each character along 
 
 ### To compile and run:
 ```
-javac HuffmanSubmit.java
-java HuffmanSubmit
+javac HuffmanCompress.java
+java HuffmanCompress
 ```
 
 ### Results
