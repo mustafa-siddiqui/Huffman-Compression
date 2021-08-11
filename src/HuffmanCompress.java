@@ -1,10 +1,10 @@
 /**
  * 	@file	HuffmanSubmit.java
  * 	@brief	Huffman Coding Algorithm implementation using Minimum
- *		Priority Queue to construct Huffman tree.
- *		An extra frequency file 'freq.txt' is produced which
- *		stores the characters in their binary representation
- *		and their frequencies in the original file.
+ *			Priority Queue to construct Huffman tree.
+ *			An extra frequency file 'freq.txt' is produced which
+ *			stores the characters in their binary representation
+ *			and their frequencies in the original file.
  * 	@author	Mustafa Siddiqui
  * 	@date	04/02/21
  */
@@ -18,9 +18,9 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-public class HuffmanSubmit implements Huffman {
+public class HuffmanCompress implements Huffman {
 	public static void main(String[] args) {
-		Huffman  huffman = new HuffmanSubmit();
+		Huffman  huffman = new HuffmanCompress();
 
 		// text files -> alice30.txt same as alice30_dec.txt
 		huffman.encode("alice30.txt", "out.enc", "freq.txt");
@@ -38,12 +38,13 @@ public class HuffmanSubmit implements Huffman {
 	 @param	input file name	 (to be compressed)
 	 @param frequency file	 (needed for decoding)
 	 
-	 @brief	Encodes the input file using the Huffman Compression Algorithm.
-		Creates a frequency file containing the frequency of the occurances
-		of each character with the character represented as a binary string.
-		Builds a huffman tree by creating a minimum priority queue and then
-		compresses the file by replacing each character by its huffman
-		encoding in the compressed file (output file).
+	 @brief	
+	 Encodes the input file using the Huffman Compression Algorithm.
+	 Creates a frequency file containing the frequency of the occurances
+	 of each character with the character represented as a binary string.
+	 Builds a huffman tree by creating a minimum priority queue and then
+	 compresses the file by replacing each character by its huffman
+	 encoding in the compressed file (output file).
 	*/
 	public void encode(String inputFile, String outputFile, String freqFile){
 		// read input file and create freq file
@@ -97,17 +98,19 @@ public class HuffmanSubmit implements Huffman {
 	 @param input file name	 (compressed file)
 	 @param	output file name (to be decompressed)
 	 @param frequency file	 (needed for decoding)
-	 @brief	Decodes the input file which is compressed using the Huffman 
-		Compression Algorithm.
-		Reads the frequency file to create the same Huffman tree which is
-		created during encoding/compression.
-		Reads the compressed file bit by bit and traverses down the tree
-		until a leaf node is reached printing the character when it does.
 
-		=> Have 2 options to traverse and print: iterative and recursive.
-		Iterative goes easy on the stack but uses exception handling more
-		often as it checks for EOF after every bit read. Still, it is much 
-		simpler than the recursive implementation - which is more compact. <=
+	 @brief
+	 Decodes the input file which is compressed using the Huffman 
+	 Compression Algorithm.
+	 Reads the frequency file to create the same Huffman tree which is
+	 created during encoding/compression.
+	 Reads the compressed file bit by bit and traverses down the tree
+	 until a leaf node is reached printing the character when it does.
+
+	 => Have 2 options to traverse and print: iterative and recursive.
+	 Iterative goes easy on the stack but uses exception handling more
+	 often as it checks for EOF after every bit read. Still, it is much 
+	 simpler than the recursive implementation - which is more compact. <=
 	*/
    	public void decode(String inputFile, String outputFile, String freqFile){
 		// read freq file and create hashmap
