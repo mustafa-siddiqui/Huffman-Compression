@@ -1,10 +1,10 @@
 /**
- * 	@file	HuffmanSubmit.java
+ * 	@file	HuffmanCompress.java
  * 	@brief	Huffman Coding Algorithm implementation using Minimum
- *			Priority Queue to construct Huffman tree.
- *			An extra frequency file 'freq.txt' is produced which
- *			stores the characters in their binary representation
- *			and their frequencies in the original file.
+ *		Priority Queue to construct Huffman tree.
+ *		An extra frequency file 'freq.txt' is produced which
+ *		stores the characters in their binary representation
+ *		and their frequencies in the original file.
  * 	@author	Mustafa Siddiqui
  * 	@date	04/02/21
  */
@@ -38,13 +38,12 @@ public class HuffmanCompress implements Huffman {
 	 @param	input file name	 (to be compressed)
 	 @param frequency file	 (needed for decoding)
 	 
-	 @brief	
-	 Encodes the input file using the Huffman Compression Algorithm.
-	 Creates a frequency file containing the frequency of the occurances
-	 of each character with the character represented as a binary string.
-	 Builds a huffman tree by creating a minimum priority queue and then
-	 compresses the file by replacing each character by its huffman
-	 encoding in the compressed file (output file).
+	 @brief	Encodes the input file using the Huffman Compression Algorithm.
+	 	Creates a frequency file containing the frequency of the occurances
+	 	of each character with the character represented as a binary string.
+	 	Builds a huffman tree by creating a minimum priority queue and then
+	 	compresses the file by replacing each character by its huffman
+	 	encoding in the compressed file (output file).
 	*/
 	public void encode(String inputFile, String outputFile, String freqFile){
 		// read input file and create freq file
@@ -81,7 +80,6 @@ public class HuffmanCompress implements Huffman {
 					}
 				}
 			}
-
 			// add padding to make multiple of a byte
 			encoded.flush();
 		}
@@ -99,13 +97,12 @@ public class HuffmanCompress implements Huffman {
 	 @param	output file name (to be decompressed)
 	 @param frequency file	 (needed for decoding)
 
-	 @brief
-	 Decodes the input file which is compressed using the Huffman 
-	 Compression Algorithm.
-	 Reads the frequency file to create the same Huffman tree which is
-	 created during encoding/compression.
-	 Reads the compressed file bit by bit and traverses down the tree
-	 until a leaf node is reached printing the character when it does.
+	 @brief	Decodes the input file which is compressed using the Huffman 
+	 	Compression Algorithm.
+	 	Reads the frequency file to create the same Huffman tree which is
+	 	created during encoding/compression.
+	 	Reads the compressed file bit by bit and traverses down the tree
+	 	until a leaf node is reached printing the character when it does.
 
 	 => Have 2 options to traverse and print: iterative and recursive.
 	 Iterative goes easy on the stack but uses exception handling more
